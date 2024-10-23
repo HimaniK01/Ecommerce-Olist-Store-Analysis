@@ -1,0 +1,88 @@
+
+ KPI1: Weekday Vs Weekend (order_purchase_timestamp) Payment Statistics
+
+mysql> select Weekday_Weekend, concat(round(sum(payment_value)/1000000,2),'M') as total_payment from master_data group by Weekday_Weekend ;
++-----------------------------+--------------------+
+| Weekday_Weekend  | total_payment |
++-----------------------------+--------------------+
+| Weekday                     | 12.4M              |
+| Weekend                     | 3.68M              |
++-----------------------------+--------------------+
+2 rows in set (0.92 sec)
+
+KPI2: Number of Orders with review score 5 and payment type as credit card.
+
+mysql> select Review_Score, payment_type, concat(round(count(order_id)/1000,2),'K') as No_of_Orders from master_data group by review_score, payment_type 
+having review_score = 5 and payment_type = 'Credit_Card';
++--------------------+--------------------+---------------------+
+| Review_Score | payment_type | No_of_Orders  |
++--------------------+--------------------+---------------------+
+|            5              | credit_card     | 44.58K              |
++---------------------+-------------------+---------------------+
+1 row in set (0.40 sec)
+
+KPI3: Average number of days taken for order_delivered_customer_date for pet_shop
+
+mysql> select Product_category_name, concat(round(avg(shipping_days),0),' Days') as Avg_Shipping_days from master_data group by product_category_name 
+having product_category_name = 'Pet_Shop';
++---------------------------------- +----------------------------+
+| Product_category_name  | Avg_Shipping_days |
++-----------------------------------+----------------------------+
+| pet_shop                             | 11 Days                     |
++-----------------------------------+----------------------------+
+1 row in set (0.38 sec)
+
+KPI4: Average price and payment values from customers of sao paulo city
+
+mysql> select customer_city, round(avg(Price),2) as average_Price,round(avg(Payment_Value),2) as average_Payments from master_data group by customer_city 
+having customer_city = "Sao Paulo" ;
++-------------------+---------------------+----------------------------+
+| customer_city | average_Price | average_Payments |
++-------------------+----------------------+---------------------------+
+| sao paulo        |               110.79 |                      139.39 |
++-------------------+---------------------+---------------------------+
+1 row in set (0.38 sec)
+
+KPI5 : Relationship between shipping days (order_delivered_customer_date - order_purchase_timestamp) Vs review scores.
+
+mysql> select review_score, concat(round(avg(Shipping_Days),0),' Days') as Average_Shipping_Days from master_data group by review_score order by review_score;
++-------------------+-----------------------------------+
+| review_score  | Average_Shipping_Days |
++-------------------+-----------------------------------+
+|            1            | 20 Days                             |
+|            2            | 16 Days                             |
+|            3            | 14 Days                             |
+|            4            | 12 Days                             |
+|            5            | 11 Days                             |
++-------------------+-----------------------------------+
+5 rows in set (0.26 sec)
+
+-- Top 5 Products by Payment
+
+mysql> select product_category_name, concat(round(sum(payment_value)/1000000,2),'M') as Total_payment from master_data
+ group by product_category_name order by total_payment desc limit 5;
++------------------------+---------------+
+| product_category_name  | Total_payment |
++------------------------+---------------+
+| beleza_saude                    | 1.46M         |
+| cama_mesa_banho          | 1.44M         |
+| relogios_presentes           | 1.28M         |
+| esporte_lazer                     | 1.16M         |
+| informatica_acessorios    | 1.12M         |
++------------------------+---------------+
+5 rows in set (0.36 sec)
+
+-- Bottom 5 Products by payment 
+
+mysql> select product_category_name, concat(round(sum(payment_value)/1000,2),'K') as Total_payment from master_data 
+group by product_category_name order by total_payment asc limit 5;
++-------------------------------------------+--------------------+
+| product_category_name            | Total_payment |
++-------------------------------------------+---------------------+
+| seguros_e_servicos                   | 0.32K                |
+| fashion_roupa_infanto_juvenil   | 0.72K                |
+| cds_dvds_musicais                    | 0.95K                |
+| casa_conforto_2                         | 1.25K                |
+| pc_gamer                                    | 1.47K                 |
++------------------------------------------+----------------------+
+5 rows in set (0.38 sec)
